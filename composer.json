@@ -6,6 +6,8 @@
     "wxpay",
     "chenpay"
   ],
+  "license": "MIT",
+  "minimum-stability": "dev",
   "homepage": "http://9in.info",
   "require": {
     "php": "^5.3.3 || ^7.0",
@@ -14,11 +16,6 @@
   "autoload": {
     "psr-4": {
       "ChenPay\\": "src/ChenPay"
-    }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "1.0.0"
     }
   }
 }
