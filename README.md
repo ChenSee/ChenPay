@@ -8,7 +8,7 @@
 
 ### composer安装：
 ```
-composer require ChenSee/ChenPay
+composer require chen-see/chen-pay
 ```
 
 ### 使用教程：
