@@ -17,7 +17,7 @@ include __DIR__ . '/../vendor/autoload.php';
 $AliCookie = '';
 $WxCookie = '';
 
-$GLOBALS['sum'] = 1;
+$GLOBALS['WxSum'] = 1;
 ChenPay\Pay::Listen(10, function () use ($AliCookie) {
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
     try {
@@ -26,13 +26,14 @@ ChenPay\Pay::Listen(10, function () use ($AliCookie) {
             $order = $run->DataContrast($item['fee'], $item['time']);
             if ($order) echo $order . "订单有效！\n";
         }
-        echo $GLOBALS['sum'] . "\n";
-        $GLOBALS['sum']++;
+        echo $GLOBALS['WxSum'] . "次运行\n";
+        $GLOBALS['WxSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
-        echo $e->getMessage();
+        echo $e->getMessage() . "\n";
     }
 });
 
+$GLOBALS['AliSum'] = 1;
 $GLOBALS['syncKey'] = false;
 ChenPay\Pay::Listen(10, function () use ($WxCookie) {
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
@@ -43,14 +44,23 @@ ChenPay\Pay::Listen(10, function () use ($WxCookie) {
             $order = $run->DataContrast($item['fee'], $item['time']);
             if ($order) echo $order . "订单有效！\n";
         }
-        echo $GLOBALS['sum'] . "\n";
-        $GLOBALS['sum']++;
+        echo $GLOBALS['AliSum'] . "次运行\n";
+        $GLOBALS['AliSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
-        echo $e->getMessage();
+        echo $e->getMessage() . "\n";
     }
 });
+```
+
+### 运行：
+```
+# 前台运行
+php test/test.php
+# 后台运行
+nohup php test/test.php &
 ```
 
 ## 注意：
 
 - 无法同时判断多人支付
+- 两个支付必须分开运行，demo只是作为演示

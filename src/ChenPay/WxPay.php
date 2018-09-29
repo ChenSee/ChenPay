@@ -46,6 +46,8 @@ class WxPay extends Pay
             return json_decode($html->getContents(), true);
         } catch (GuzzleException $e) {
             throw new PayException('访问出错', 500);
+        } catch (PayException $e) {
+            throw new PayException($e->getMessage(), $e->getCode());
         } catch (\Exception $e) {
             throw new PayException('处理出错', 444);
         }
@@ -92,6 +94,8 @@ class WxPay extends Pay
             $this->syncKey = json_encode(json_decode($this->html, true)['SyncKey']);
         } catch (GuzzleException $e) {
             throw new PayException('访问出错', 500);
+        } catch (PayException $e) {
+            throw new PayException($e->getMessage(), $e->getCode());
         } catch (\Exception $e) {
             throw new PayException('处理出错', 444);
         }

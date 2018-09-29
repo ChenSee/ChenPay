@@ -21,12 +21,9 @@ class Cookie
      */
     public static function getCookieName($name = 'uid', $cookie = false)
     {
-        try {
-            $cookie = explode($name . '=', $cookie)[1];
-            if ($name == 'uid') return explode('"', $cookie)[0];
-            else return explode(';', $cookie)[0];
-        } catch (\Exception $e) {
-            throw new PayException('cookie有误', 445);
-        }
+        $getCookie = explode($name . '=', $cookie);
+        if (count($getCookie) <= 1) throw new PayException('cookie有误', 445);
+        if ($name == 'uid') return explode('"', $getCookie[1])[0];
+        else return explode(';', $getCookie[1])[0];
     }
 }
