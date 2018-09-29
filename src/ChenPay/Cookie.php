@@ -7,6 +7,9 @@
  */
 
 namespace ChenPay;
+
+use ChenPay\PayException\PayException;
+
 class Cookie
 {
     /**
@@ -14,11 +17,16 @@ class Cookie
      * @param string $name
      * @param bool $cookie
      * @return mixed
+     * @throws PayException
      */
     public static function getCookieName($name = 'uid', $cookie = false)
     {
-        $cookie = explode($name . '=', $cookie)[1];
-        if ($name == 'uid') return explode('"', $cookie)[0];
-        else return explode(';', $cookie)[0];
+        try {
+            $cookie = explode($name . '=', $cookie)[1];
+            if ($name == 'uid') return explode('"', $cookie)[0];
+            else return explode(';', $cookie)[0];
+        } catch (\Exception $e) {
+            throw new PayException('cookie有误', 445);
+        }
     }
 }
