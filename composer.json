@@ -10,7 +10,7 @@
   "minimum-stability": "dev",
   "homepage": "http://9in.info",
   "require": {
-    "php": "^5.3.3 || ^7.0",
+    "php": ">=5.5",
     "guzzlehttp/guzzle": "^6.3"
   },
   "autoload": {

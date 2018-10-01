@@ -17,7 +17,7 @@ include __DIR__ . '/../vendor/autoload.php';
 $AliCookie = '';
 $WxCookie = '';
 
-$GLOBALS['WxSum'] = 1;
+$GLOBALS['AliSum'] = 1;
 ChenPay\Pay::Listen(10, function () use ($AliCookie) {
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
     try {
@@ -26,14 +26,14 @@ ChenPay\Pay::Listen(10, function () use ($AliCookie) {
             $order = $run->DataContrast($item['fee'], $item['time']);
             if ($order) echo $order . "订单有效！\n";
         }
-        echo $GLOBALS['WxSum'] . "次运行\n";
-        $GLOBALS['WxSum']++;
+        echo $GLOBALS['AliSum'] . "次运行\n";
+        $GLOBALS['AliSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
     }
 });
 
-$GLOBALS['AliSum'] = 1;
+$GLOBALS['WxSum'] = 1;
 $GLOBALS['syncKey'] = false;
 ChenPay\Pay::Listen(10, function () use ($WxCookie) {
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
@@ -44,8 +44,8 @@ ChenPay\Pay::Listen(10, function () use ($WxCookie) {
             $order = $run->DataContrast($item['fee'], $item['time']);
             if ($order) echo $order . "订单有效！\n";
         }
-        echo $GLOBALS['AliSum'] . "次运行\n";
-        $GLOBALS['AliSum']++;
+        echo $GLOBALS['WxSum'] . "次运行\n";
+        $GLOBALS['WxSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
     }
