@@ -122,9 +122,10 @@ class WxPay extends Pay
      * 获取最新的订单号
      * @param $fee
      * @param $time
+     * @param int $Minute
      * @return bool
      */
-    public function DataContrast($fee, $time)
+    public function DataContrast($fee, $time, $Minute = 3)
     {
         // TODO: Implement DataContrast() method.
         if (isset($this->json['AddMsgList']) && is_array($this->json['AddMsgList']))
@@ -132,7 +133,8 @@ class WxPay extends Pay
                 if (preg_match('/微信支付收款/', $item['FileName'])) {
                     $fees = explode('微信支付收款', $item['FileName']);
                     $fees = explode('元', $fees[1])[0];
-                    if ($item['CreateTime'] < $time && $fees == $fee) return $item['MsgId'];
+                    if ($item['CreateTime'] < $time && $item['CreateTime'] > $time - $Minute * 60 &&
+                        $fees == $fee) return $item['MsgId'];
                 }
         return false;
     }

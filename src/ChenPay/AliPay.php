@@ -74,15 +74,17 @@ class AliPay extends Pay
      * 获取最新的订单号
      * @param $fee
      * @param $time
+     * @param int $Minute
      * @return bool
      */
-    public function DataContrast($fee, $time)
+    public function DataContrast($fee, $time, $Minute = 3)
     {
         // TODO: Implement DataContrast() method.
         if (isset($this->json['result']['detail']) && is_array($this->json['result']['detail']))
             foreach ($this->json['result']['detail'] as $item)
                 if ($item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
-                    strtotime($item['tradeTime']) < $time && $item['tradeAmount'] == $fee) {
+                    strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
+                    $item['tradeAmount'] == $fee) {
                     return $item['orderNo'];
                 }
 

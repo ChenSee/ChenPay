@@ -22,7 +22,7 @@ abstract class Pay
 
     abstract protected function DataHandle();
 
-    abstract protected function DataContrast($fee, $time);
+    abstract protected function DataContrast($fee, $time, $Minute);
 
     public static function Listen($s, $func)
     {
