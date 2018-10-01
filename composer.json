@@ -7,7 +7,6 @@
     "chenpay"
   ],
   "license": "MIT",
-  "minimum-stability": "dev",
   "homepage": "http://9in.info",
   "require": {
     "php": ">=5.5",
