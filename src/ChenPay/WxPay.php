@@ -95,7 +95,7 @@ class WxPay extends Pay
             $this->html = $html->getContents();
             $this->syncKey = json_encode(json_decode($this->html, true)['SyncKey']);
         } catch (GuzzleException $e) {
-            throw new PayException('访问出错', 500);
+            throw new PayException($e->getMessage(), 500);
         } catch (PayException $e) {
             throw new PayException($e->getMessage(), $e->getCode());
         } catch (\Exception $e) {

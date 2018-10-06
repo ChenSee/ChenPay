@@ -48,7 +48,7 @@ class AliPay extends Pay
                 ->getBody();
             $this->html = iconv('GBK', 'UTF-8', $aliPayHtml->getContents());
         } catch (GuzzleException $e) {
-            throw new PayException('访问出错', 500);
+            throw new PayException($e->getMessage(), 500);
         } catch (PayException $e) {
             throw new PayException($e->getMessage(), 445);
         } catch (\Exception $e) {
