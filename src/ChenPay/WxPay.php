@@ -71,8 +71,9 @@ class WxPay extends Pay
         try {
             $html = (new \GuzzleHttp\Client())
                 ->request('POST', "https://" . $this->url . "/cgi-bin/mmwebwx-bin/webwxsync?sid=" .
-                    Cookie::getCookieName('wxsid', $this->cookie) . "&skey=",
-                    ['headers' => [
+                    Cookie::getCookieName('wxsid', $this->cookie) . "&skey=", [
+                    'connect_timeout' => 5,
+                    'headers' => [
                         'Accept' => 'application/json, text/javascript',
                         'Accept-Encoding' => 'gzip, deflate, br',
                         'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
@@ -84,11 +85,12 @@ class WxPay extends Pay
                         'Origin' => 'https://' . $this->url,
                         'Referer' => 'https://' . $this->url . '/',
                         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-                    ], 'body' => '{"BaseRequest":{"Uin":' . Cookie::getCookieName('wxuin', $this->cookie) .
+                    ],
+                    'body' => '{"BaseRequest":{"Uin":' . Cookie::getCookieName('wxuin', $this->cookie) .
                         ',"Sid":"' . Cookie::getCookieName('wxsid', $this->cookie) . '","Skey":"' .
                         '","DeviceID":"e453731506754000"},"SyncKey":' . $sync .
                         ',"rr":' . rand(100000000, 999999999) . '}'
-                    ])
+                ])
                 ->getBody();
             $this->html = $html->getContents();
             $this->syncKey = json_encode(json_decode($this->html, true)['SyncKey']);

@@ -24,24 +24,27 @@ class AliPay extends Pay
         // TODO: Implement getData() method.
         try {
             $aliPayHtml = (new \GuzzleHttp\Client())
-                ->request('POST', "https://mbillexprod.alipay.com/enterprise/fundAccountDetail.json", ['headers' => [
-                    'Accept' => 'application/json, text/javascript',
-                    'Accept-Encoding' => 'gzip, deflate, br',
-                    'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
-                    'Connection' => 'keep-alive',
-                    'Content-Length' => '295',
-                    'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'Cookie' => $this->cookie,
-                    'Host' => 'mbillexprod.alipay.com',
-                    'Origin' => 'https://mbillexprod.alipay.com',
-                    'Referer' => 'https://mbillexprod.alipay.com/enterprise/fundAccountDetail.htm',
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
-                    'X-Requested-With' => 'XMLHttpRequest'
-                ], 'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('uid', $this->cookie) .
-                    '&showType=1&type=&precisionQueryKey=tradeNo&' .
-                    'startDateInput=' . date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endDateInput=' . date('Y-m-d') . '+23%3A59%3A59&' .
-                    'pageSize=20&pageNum=1&sortTarget=tradeTime&order=descend&sortType=0&' .
-                    '_input_charset=gbk&ctoken=' . Cookie::getCookieName('ctoken', $this->cookie)])
+                ->request('POST', "https://mbillexprod.alipay.com/enterprise/fundAccountDetail.json", [
+                    'connect_timeout' => 5,
+                    'headers' => [
+                        'Accept' => 'application/json, text/javascript',
+                        'Accept-Encoding' => 'gzip, deflate, br',
+                        'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
+                        'Connection' => 'keep-alive',
+                        'Content-Length' => '295',
+                        'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Cookie' => $this->cookie,
+                        'Host' => 'mbillexprod.alipay.com',
+                        'Origin' => 'https://mbillexprod.alipay.com',
+                        'Referer' => 'https://mbillexprod.alipay.com/enterprise/fundAccountDetail.htm',
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
+                        'X-Requested-With' => 'XMLHttpRequest'
+                    ],
+                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('uid', $this->cookie) .
+                        '&showType=1&type=&precisionQueryKey=tradeNo&' .
+                        'startDateInput=' . date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endDateInput=' . date('Y-m-d') . '+23%3A59%3A59&' .
+                        'pageSize=20&pageNum=1&sortTarget=tradeTime&order=descend&sortType=0&' .
+                        '_input_charset=gbk&ctoken=' . Cookie::getCookieName('ctoken', $this->cookie)])
                 ->getBody();
             $this->html = iconv('GBK', 'UTF-8', $aliPayHtml->getContents());
         } catch (GuzzleException $e) {
