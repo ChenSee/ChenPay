@@ -25,7 +25,7 @@ class AliPay extends Pay
         try {
             $aliPayHtml = (new \GuzzleHttp\Client())
                 ->request('POST', "https://mbillexprod.alipay.com/enterprise/fundAccountDetail.json", [
-                    'connect_timeout' => 5,
+                    'connect_timeout' => 10,
                     'headers' => [
                         'Accept' => 'application/json, text/javascript',
                         'Accept-Encoding' => 'gzip, deflate, br',
