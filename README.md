@@ -2,6 +2,7 @@
 
 - 免签约支付宝 根据COOKIE
 - 免签约微信支付 根据COOKIE
+- 实时到帐个人账户
 - PHP程序自监听
 - 我的站点[云](http://yun.9in.info)
 - 我的博客[CHEN](http://9in.info)
