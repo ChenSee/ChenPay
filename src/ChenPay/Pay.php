@@ -26,12 +26,11 @@ abstract class Pay
 
     public static function Listen($s, $func)
     {
-        ignore_user_abort(TRUE);
+        ignore_user_abort();
         set_time_limit(0);
-        while (1) {
-            if (connection_aborted()) break;
+        do {
             $func();
             sleep($s);
-        }
+        } while (true);
     }
 }
