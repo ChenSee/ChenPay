@@ -10,6 +10,7 @@
 ### composer安装：
 ```
 composer require chen-see/chen-pay
+# 如监听时出现异常 yum update nss
 ```
 
 ### 使用教程：
