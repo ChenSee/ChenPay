@@ -101,6 +101,7 @@ class AliPay extends Pay
         $aliPayHtml = $url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
         if (preg_match('/"failed"/', $aliPayHtml)) {
             $aliPayHtml = !$url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
+            if (preg_match('/"failed"/', $aliPayHtml)) throw new PayException('频繁访问', 446);
             $this->url = !$url;
         }
         try {
