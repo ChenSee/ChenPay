@@ -9,6 +9,10 @@
 ### V1.0.5
 - 更新支付宝双接口轮流切换API达到支付宝防止频繁访问阻止机制
 - 如果单一接口出现阻止则会持续使用另外接口
+### V1.0.6
+- 增加支付宝频繁错误码446
+### V1.0.7
+- 10秒超时时间
 
 ### composer安装：
 ```
@@ -59,7 +63,7 @@ ChenPay\Pay::Listen(10, function () use ($WxCookie) {
     }
 });
 ```
-#### 获取支付宝COOKIE
+### 获取支付宝COOKIE
 - 浏览器访问：https://mbillexprod.alipay.com/enterprise/tradeListQuery.htm
 - 登录支付宝账号
 - 浏览器按f12再刷新一下
