@@ -60,7 +60,7 @@ class AliPay extends Pay
         try {
             return (new \GuzzleHttp\Client())
                 ->request('POST', "https://mbillexprod.alipay.com/enterprise/fundAccountDetail.json", [
-                    'timeout' => 5,
+                    'timeout' => 10,
                     'headers' => [
                         'Cookie' => $this->cookie,
                         'Origin' => 'https://mbillexprod.alipay.com',

@@ -25,8 +25,9 @@ class WxPay extends Pay
     {
         try {
             $html = (new \GuzzleHttp\Client())
-                ->request('POST', "https://" . $this->url . "/cgi-bin/mmwebwx-bin/webwxinit?r=695888609",
-                    ['headers' => [
+                ->request('POST', "https://" . $this->url . "/cgi-bin/mmwebwx-bin/webwxinit?r=695888609", [
+                    'timeout' => 10,
+                    'headers' => [
                         'Accept' => 'application/json, text/javascript',
                         'Accept-Encoding' => 'gzip, deflate, br',
                         'Accept-Language' => 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
@@ -38,10 +39,11 @@ class WxPay extends Pay
                         'Origin' => 'https://' . $this->url,
                         'Referer' => 'https://' . $this->url . '/',
                         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-                    ], 'body' => '{"BaseRequest":{"Uin":' . Cookie::getCookieName('wxuin', $this->cookie) .
+                    ],
+                    'body' => '{"BaseRequest":{"Uin":' . Cookie::getCookieName('wxuin', $this->cookie) .
                         ',"Sid":"' . Cookie::getCookieName('wxsid', $this->cookie) . '","Skey":' .
                         '"","DeviceID":"e453731506754000"}}'
-                    ])
+                ])
                 ->getBody();
             return json_decode($html->getContents(), true);
         } catch (GuzzleException $e) {
@@ -72,7 +74,7 @@ class WxPay extends Pay
             $html = (new \GuzzleHttp\Client())
                 ->request('POST', "https://" . $this->url . "/cgi-bin/mmwebwx-bin/webwxsync?sid=" .
                     Cookie::getCookieName('wxsid', $this->cookie) . "&skey=", [
-                    'timeout' => 5,
+                    'timeout' => 10,
                     'headers' => [
                         'Accept' => 'application/json, text/javascript',
                         'Accept-Encoding' => 'gzip, deflate, br',
