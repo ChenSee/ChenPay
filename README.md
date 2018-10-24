@@ -35,13 +35,16 @@ ChenPay\Pay::Listen(10, function () use ($AliCookie) {
         foreach ($data as $item) {
             $order = $run->DataContrast($item['fee'], $item['time'],3);
             if ($order) echo $order . "订单有效！\n";
+            unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['AliSum'] . "次运行\n";
         $GLOBALS['AliType'] = !$GLOBALS['AliType'];
         $GLOBALS['AliSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
+        unset($e);// 摧毁变量防止内存溢出
     }
+    unset($run, $data);// 摧毁变量防止内存溢出
 });
 
 $GLOBALS['WxSum'] = 1;
@@ -55,14 +58,18 @@ ChenPay\Pay::Listen(10, function () use ($WxCookie) {
         foreach ($data as $item) {
             $order = $run->DataContrast($item['fee'], $item['time']);
             if ($order) echo $order . "订单有效！\n";
+            unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['WxSum'] . "次运行\n";
         $GLOBALS['WxSum']++;
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
+        unset($e);// 摧毁变量防止内存溢出
     }
+    unset($run, $data);// 摧毁变量防止内存溢出
 });
 ```
+
 ### 获取支付宝COOKIE
 - 浏览器访问：https://mbillexprod.alipay.com/enterprise/tradeListQuery.htm
 - 登录支付宝账号
@@ -89,3 +96,4 @@ nohup php test/test.php &
 - 无法同时判断相同价格多人支付
 - 两个支付必须分开运行，demo只是作为演示
 - 服务器时间必须是国内的时间，不然对不上支付宝微信时间
+- 如果使用框架运行可能存在内存溢出问题，可以使用Crontab
