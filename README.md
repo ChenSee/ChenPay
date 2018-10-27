@@ -13,6 +13,8 @@
 - 增加支付宝频繁错误码446
 ### V1.0.7
 - 10秒超时时间
+### readme更新
+- 有订单情况下才是10秒一次的频率 杜绝支付宝风控
 
 ### composer安装：
 ```
@@ -27,19 +29,22 @@ $WxCookie = '';
 
 $GLOBALS['AliSum'] = 1;
 $GLOBALS['AliType'] = true; // 支付宝接口切换
+$GLOBALS['AliStatus'] = time(); // 暂停 有订单情况下才是10秒一次的频率 杜绝支付宝风控
 ChenPay\Pay::Listen(10, function () use ($AliCookie) {
     // time 现在时间此为订单生成时间 默认3分钟有效时间
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
+    if ($GLOBALS['AliStatus'] > time() && count($data) == 0) return;
     try {
         $run = (new ChenPay\AliPay($AliCookie))->getData($GLOBALS['AliType'])->DataHandle();
         foreach ($data as $item) {
-            $order = $run->DataContrast($item['fee'], $item['time'],3);
+            $order = $run->DataContrast($item['fee'], $item['time'], 3);
             if ($order) echo $order . "订单有效！\n";
             unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['AliSum'] . "次运行\n";
         $GLOBALS['AliType'] = !$GLOBALS['AliType'];
         $GLOBALS['AliSum']++;
+        $GLOBALS['AliStatus'] = time() + 2 * 60; // 无订单情况下2分钟一次
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
         unset($e);// 摧毁变量防止内存溢出
