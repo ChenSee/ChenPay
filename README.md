@@ -6,6 +6,8 @@
 - PHP程序自监听
 - 我的站点[云](http://yun.9in.info)
 - 我的博客[CHEN](http://9in.info)
+### 讨论群
+https://t.me/chenAirport
 ### V1.0.5
 - 更新支付宝双接口轮流切换API达到支付宝防止频繁访问阻止机制
 - 如果单一接口出现阻止则会持续使用另外接口
