@@ -143,12 +143,12 @@ class AliPay extends Pay
                 if ($this->url && $item['tradeFrom'] == '外部商户' && $item['direction'] == '卖出' &&
                     strtotime($item['gmtCreate']) > $time - $Minute * 60 && strtotime($item['gmtCreate']) < $time &&
                     $item['totalAmount'] == $fee) {
-                    return $item['outTradeNo'];
+                    return $item['tradeNo'];
                 }
                 if (!$this->url && $item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
                     strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
                     $item['tradeAmount'] == $fee) {
-                    return $item['orderNo'];
+                    return $item['tradeNo'];
                 }
             }
 
