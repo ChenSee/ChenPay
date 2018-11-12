@@ -123,7 +123,7 @@ class AliPay extends Pay
         } catch (\Exception $e) {
             throw new PayException('解析出错', 444);
         }
-        if (isset($this->json['exception_marking'])) throw new PayException('数据出错', 444);
+//        if (isset($this->json['exception_marking'])) throw new PayException('数据出错', 444);
         if (isset($this->json['target'])) throw new PayException('cookie失效', 445);
         return $this;
     }
