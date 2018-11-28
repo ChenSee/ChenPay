@@ -16,6 +16,37 @@ class AliPay extends Pay
     public $url = false;
 
     /**
+     * @return $this
+     * @throws PayException
+     */
+    public function getRefresh()
+    {
+        try {
+            $aliPayHtml = (new \GuzzleHttp\Client())
+                ->request('POST', "https://enterpriseportal.alipay.com/portal/navload.json?t=" . time() * 1000, [
+                    'timeout' => 10,
+                    'headers' => [
+                        'Cookie' => $this->cookie,
+                        'Accept-Encoding' => 'gzip, deflate, br',
+                        'Accept-Language' => 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+                        'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
+                        'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Accept' => 'application/json, text/javascript',
+                        'Referer' => 'https://mbillexprod.alipay.com/enterprise/tradeListQuery.htm',
+                        'Origin' => 'https://mbillexprod.alipay.com',
+                        'Connection' => 'keep-alive',
+                    ],
+                    'body' => 'action=loadEntInfo'
+                ])
+                ->getBody();
+        } catch (GuzzleException $e) {
+            throw new PayException($e->getMessage(), 500);
+        }
+        if (!preg_match('/navResult/', $aliPayHtml)) throw new PayException('cookie失效', 445);
+        return $this;
+    }
+
+    /**
      * @return \Psr\Http\Message\StreamInterface
      * @throws PayException
      */
@@ -98,6 +129,7 @@ class AliPay extends Pay
     {
         // TODO: Implement getData() method.
         $this->url = $url;
+        $this->getRefresh();
         $aliPayHtml = $url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
         if (preg_match('/"failed"/', $aliPayHtml)) {
             $aliPayHtml = !$url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
