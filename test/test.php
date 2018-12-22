@@ -20,8 +20,9 @@ ChenPay\Pay::Listen(10, function () use ($AliCookie) {
     try {
         $run = (new ChenPay\AliPay($AliCookie))->getData($GLOBALS['AliType'])->DataHandle();
         foreach ($data as $item) {
-            $order = $run->DataContrast($item['fee'], $item['time'], 3);
-            if ($order) echo $order . "订单有效！\n";
+            $Remarks = '123456'; //如果需要判断备注
+            $order = $run->DataContrast($item['fee'], $item['time'], 5, $Remarks);
+            if ($order) echo "{$order}订单有效！备注：{$Remarks}\n";
             unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['AliSum'] . "次运行\n";
@@ -41,11 +42,12 @@ ChenPay\Pay::Listen(10, function () use ($WxCookie) {
     // time 现在时间此为订单生成时间 默认3分钟有效时间
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
     try {
-        $run = (new ChenPay\WxPay($WxCookie))->getData('wx2.qq.com', $GLOBALS['syncKey'])->DataHandle();
+        $run = (new ChenPay\WxPay($WxCookie))->getData('wx.qq.com', $GLOBALS['syncKey'])->DataHandle();
         $GLOBALS['syncKey'] = $run->syncKey;
         foreach ($data as $item) {
-            $order = $run->DataContrast($item['fee'], $item['time']);
-            if ($order) echo $order . "订单有效！\n";
+            $Remarks = '123456'; //如果需要判断备注
+            $order = $run->DataContrast($item['fee'], $item['time'], 3, $Remarks);
+            if ($order) echo "{$order}订单有效！备注：{$Remarks}\n";
             unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['WxSum'] . "次运行\n";

@@ -165,21 +165,23 @@ class AliPay extends Pay
      * @param $fee
      * @param $time
      * @param int $Minute
-     * @return bool
+     * @param bool $Remarks
+     * @return array|bool
      */
-    public function DataContrast($fee, $time, $Minute = 3)
+    public function DataContrast($fee, $time, $Minute = 3, $Remarks = false)
     {
         // TODO: Implement DataContrast() method.
+//        print_r($this->json['result']['detail']);
         if (isset($this->json['result']['detail']) && is_array($this->json['result']['detail']))
             foreach ($this->json['result']['detail'] as $item) {
-                if ($this->url && $item['tradeFrom'] == '外部商户' && $item['direction'] == '卖出' &&
-                    strtotime($item['gmtCreate']) > $time - $Minute * 60 && strtotime($item['gmtCreate']) < $time &&
-                    $item['totalAmount'] == $fee) {
-                    return $item['tradeNo'];
-                }
-                if (!$this->url && $item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
-                    strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
-                    $item['tradeAmount'] == $fee) {
+                if ((
+                        ($this->url && $item['tradeFrom'] == '外部商户' && $item['direction'] == '卖出' &&
+                            strtotime($item['gmtCreate']) > $time - $Minute * 60 && strtotime($item['gmtCreate']) < $time &&
+                            $item['totalAmount'] == $fee) ||
+                        (!$this->url && $item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
+                            strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
+                            $item['tradeAmount'] == $fee)
+                    ) && (!$Remarks || $item['goodsTitle'] == "商品-{$Remarks}")) {
                     return $item['tradeNo'];
                 }
             }

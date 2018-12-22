@@ -15,6 +15,7 @@ abstract class Pay
 
     public function __construct($cookie = false)
     {
+        date_default_timezone_set("PRC");
         $this->cookie = $cookie;
     }
 
