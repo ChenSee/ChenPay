@@ -181,7 +181,8 @@ class AliPay extends Pay
                         (!$this->url && $item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
                             strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
                             $item['tradeAmount'] == $fee)
-                    ) && (!$Remarks || $item['goodsTitle'] == "商品-{$Remarks}")) {
+                    ) && ($Remarks === false || ($Remarks != '' && (preg_match("/{$Remarks}/", $item['goodsTitle'])) ||
+                            ($Remarks == '' && $item['goodsTitle'] == '商品')))) {
                     return $item['tradeNo'];
                 }
             }

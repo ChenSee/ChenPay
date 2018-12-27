@@ -139,7 +139,9 @@ class WxPay extends Pay
                     $fees = explode('微信支付收款', $item['FileName']);
                     $fees = explode('元', $fees[1])[0];
                     if ($item['CreateTime'] < $time && $item['CreateTime'] > $time - $Minute * 60 &&
-                        $fees == $fee && (!$Remarks || preg_match("/备注：{$Remarks}</", $item['Content']))) {
+                        $fees == $fee && ($Remarks === false || (($Remarks != '' && preg_match("/备注：{$Remarks}</", $item['Content']))
+                                || ($Remarks == '' && !preg_match("/备注：/", $item['Content'])))
+                        )) {
                         return $item['MsgId'];
                     }
                 }
