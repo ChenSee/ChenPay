@@ -6,6 +6,8 @@
 - PHP程序自监听
 ### 讨论群
 https://t.me/chenAirport
+### DEMO测试
+https://pay.n2.nu
 
 ### composer安装：
 ```
