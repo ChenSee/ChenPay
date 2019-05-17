@@ -94,8 +94,6 @@ php test/test.php
 nohup php test/test.php &
 ```
 
-### 请我喝杯奶茶呗
-![捐赠](http://ww1.sinaimg.cn/large/006v0omggy1fyfl7ilcj5j30go08c0tu.jpg)
 ## 注意：
 
 - 根据备注可判断相同价格多人支付（出现相同价格的多并发支付时可要求用户输入随机数字备注解决该问题）
