@@ -68,7 +68,7 @@ class AliPay extends Pay
                         'X-Requested-With' => 'XMLHttpRequest',
                         'Connection' => 'keep-alive',
                     ],
-                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('uid', $this->cookie) .
+                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('CLUB_ALIPAY_COM', $this->cookie) .
                         '&status=SUCCESS&entityFilterType=0&activeTargetSearchItem=tradeNo&tradeFrom=ALL&startTime=' .
                         date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endTime=' . date('Y-m-d') .
                         '+23%3A59%3A59&pageSize=20&pageNum=1&total=1&sortTarget=gmtCreate&order=descend&sortType=0&_input_charset=gbk&ctoken=' .
@@ -105,7 +105,7 @@ class AliPay extends Pay
                         'Connection' => 'keep-alive',
                     ],
 
-                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('uid', $this->cookie) .
+                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('CLUB_ALIPAY_COM', $this->cookie) .
                         '&showType=1&type=&precisionQueryKey=tradeNo&' .
                         'startDateInput=' . date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endDateInput=' . date('Y-m-d') . '+23%3A59%3A59&' .
                         'pageSize=20&pageNum=1&total=1&sortTarget=tradeTime&order=descend&sortType=0&' .
@@ -171,7 +171,7 @@ class AliPay extends Pay
     public function DataContrast($fee, $time, $Minute = 3, $Remarks = false)
     {
         // TODO: Implement DataContrast() method.
-//        print_r($this->json['result']['detail']);
+//        print_r($this->json['result']['detail'][0]);
         if (isset($this->json['result']['detail']) && is_array($this->json['result']['detail']))
             foreach ($this->json['result']['detail'] as $item) {
                 if ((
