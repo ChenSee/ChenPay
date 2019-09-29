@@ -23,7 +23,8 @@ class AliPay extends Pay
     {
         try {
             $aliPayHtml = (new \GuzzleHttp\Client())
-                ->request('POST', "https://enterpriseportal.alipay.com/portal/navload.json?t=" . time() * 1000, [
+//                ->request('POST', "https://enterpriseportal.alipay.com/portal/navload.json?t=" . time() * 1000, [
+                ->request('GET', "https://mrchportalweb.alipay.com/user/home.htm", [
                     'timeout' => 10,
                     'headers' => [
                         'Cookie' => $this->cookie,
@@ -36,13 +37,14 @@ class AliPay extends Pay
                         'Origin' => 'https://mbillexprod.alipay.com',
                         'Connection' => 'keep-alive',
                     ],
-                    'body' => 'action=loadEntInfo'
+//                    'body' => 'action=load'
                 ])
                 ->getBody();
         } catch (GuzzleException $e) {
             throw new PayException($e->getMessage(), 500);
         }
-        if (!preg_match('/navResult/', $aliPayHtml)) throw new PayException('cookie失效', 445);
+//        if (!preg_match('/navResult/', $aliPayHtml)) throw new PayException('cookie失效', 445);
+        if (!preg_match('/中心/', $aliPayHtml)) throw new PayException('cookie失效', 445);
         return $this;
     }
 
