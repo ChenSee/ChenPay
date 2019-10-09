@@ -1,7 +1,7 @@
-# 欢迎使用 **composer** 免签约支付宝与微信 带监听
+# **Composer** 免签约支付宝与微信 带监听
 
-- 免签约支付宝 根据COOKIE
-- 免签约微信支付 根据COOKIE
+- 免签约支付宝
+- 免签约微信支付
 - 实时到帐个人账户
 - PHP程序自监听
 ### 讨论群
@@ -21,14 +21,11 @@ $aliCookie = '';
 $wxCookie = '';
 
 $GLOBALS['aliSum'] = 1;
-$GLOBALS['aliType'] = true; // 支付宝接口切换
-$GLOBALS['aliStatus'] = time(); // 暂停 有订单情况下才是10秒一次的频率 杜绝支付宝风控
 ChenPay\Pay::Listen(10, function () use ($aliCookie) {
     // time 现在时间此为订单生成时间 默认3分钟有效时间
     $data = [['fee' => 0.01, 'time' => time() + 3 * 60]];
-    if ($GLOBALS['aliStatus'] > time() && count($data) == 0) return;
     try {
-        $run = (new ChenPay\AliPay($aliCookie))->getData($GLOBALS['aliType'])->DataHandle();
+        $run = (new ChenPay\AliPay($aliCookie))->getData()->DataHandle();
         foreach ($data as $item) {
             $remarks = '123456'; //如果需要判断备注
             $order = $run->DataContrast($item['fee'], $item['time'], 5, $remarks);
@@ -36,9 +33,7 @@ ChenPay\Pay::Listen(10, function () use ($aliCookie) {
             unset($order, $item);// 摧毁变量防止内存溢出
         }
         echo $GLOBALS['aliSum'] . "次运行\n";
-        $GLOBALS['aliType'] = !$GLOBALS['aliType'];
         $GLOBALS['aliSum']++;
-        $GLOBALS['aliStatus'] = time() + 2 * 60; //
     } catch (\ChenPay\PayException\PayException $e) {
         echo $e->getMessage() . "\n";
         unset($e);// 摧毁变量防止内存溢出
@@ -102,6 +97,8 @@ nohup php test/test.php &
 - 如果使用框架运行可能存在内存溢出问题，可以使用Crontab，请自行去除```ChenPay\Pay::Listen```函数，变量需要另外选择存储方式mysql\redis等
 
 ## 更新日志：
+#### V1.5
+- 新稳定支付宝接口无风控
 #### V1.4
 - 修复支付宝风控规则更改
 #### V1.3
@@ -119,5 +116,3 @@ nohup php test/test.php &
 #### V1.0.5
 - 更新支付宝双接口轮流切换API达到支付宝防止频繁访问阻止机制
 - 如果单一接口出现阻止则会持续使用另外接口
-### readme更新
-- 有订单情况下才是10秒一次的频率 杜绝支付宝风控

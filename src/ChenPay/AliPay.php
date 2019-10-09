@@ -23,64 +23,55 @@ class AliPay extends Pay
     {
         try {
             $aliPayHtml = (new \GuzzleHttp\Client())
-//                ->request('POST', "https://enterpriseportal.alipay.com/portal/navload.json?t=" . time() * 1000, [
-                ->request('GET', "https://mrchportalweb.alipay.com/user/home.htm", [
+                ->request('POST', "https://enterpriseportal.alipay.com/portal/navload.json?t=" . time() * 1000, [
                     'timeout' => 10,
                     'headers' => [
                         'Cookie' => $this->cookie,
                         'Accept-Encoding' => 'gzip, deflate, br',
                         'Accept-Language' => 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                        'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
+                        'User-Agent' => 'Mozilla/5.0 (Linux; U; Android 9; zh-CN; MI MAX 3 Build/PKQ1.190223.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/11.8.8.968 UWS/2.13.2.91 Mobile Safari/537.36 UCBS/2.13.2.91_190617211143 NebulaSDK/1.8.100112 Nebula AlipayDefined(nt:4G,ws:393|0|2.75) AliApp(AP/10.1.68.7434) AlipayClient/10.1.68.7434 Language/zh-Hans useStatusBar/true isConcaveScreen/false Region/CN',
                         'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
                         'Accept' => 'application/json, text/javascript',
-                        'Referer' => 'https://mbillexprod.alipay.com/enterprise/tradeListQuery.htm',
+                        'Referer' => 'https://mrchportalweb.alipay.com/user/home.htm',
                         'Origin' => 'https://mbillexprod.alipay.com',
                         'Connection' => 'keep-alive',
                     ],
-//                    'body' => 'action=load'
+                    'body' => 'action=loadEntInfo'
                 ])
                 ->getBody();
         } catch (GuzzleException $e) {
             throw new PayException($e->getMessage(), 500);
         }
-//        if (!preg_match('/navResult/', $aliPayHtml)) throw new PayException('cookie失效', 445);
-        if (!preg_match('/中心/', $aliPayHtml)) throw new PayException('cookie失效', 445);
+        if (!preg_match('/navResult/', $aliPayHtml)) throw new PayException('cookie失效', 445);
         return $this;
     }
 
     /**
-     * @return \Psr\Http\Message\StreamInterface
+     * @param $order_sn
+     * @return
      * @throws PayException
      */
-    public function HtmlOne()
+    public function getOrderRemark($order_sn)
     {
         try {
-            return (new \GuzzleHttp\Client())
-                ->request('POST', "https://mbillexprod.alipay.com/enterprise/tradeListQuery.json", [
+            $html = (new \GuzzleHttp\Client())
+                ->request('GET', "https://tradeeportlet.alipay.com/wireless/tradeDetail.htm?tradeNo=" . $order_sn, [
                     'timeout' => 10,
                     'headers' => [
                         'Cookie' => $this->cookie,
-                        'Origin' => 'https://mbillexprod.alipay.com',
-                        'Accept-Encoding' => 'gzip, deflate, br',
-                        'Accept-Language' => 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
-                        'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                        'Accept' => 'application/json, text/javascript',
-                        'Referer' => 'https://mbillexprod.alipay.com/enterprise/tradeListQuery.htm',
-                        'X-Requested-With' => 'XMLHttpRequest',
-                        'Connection' => 'keep-alive',
-                    ],
-                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('CLUB_ALIPAY_COM', $this->cookie) .
-                        '&status=SUCCESS&entityFilterType=0&activeTargetSearchItem=tradeNo&tradeFrom=ALL&startTime=' .
-                        date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endTime=' . date('Y-m-d') .
-                        '+23%3A59%3A59&pageSize=20&pageNum=1&total=1&sortTarget=gmtCreate&order=descend&sortType=0&_input_charset=gbk&ctoken=' .
-                        Cookie::getCookieName('ctoken', $this->cookie),
+                        'Sec-Fetch-Mode' => 'no-cors',
+                        'Referer' => 'https://render.alipay.com/p/z/merchant-mgnt/simple-order.html',
+                        'User-Agent' => 'Mozilla/5.0 (Linux; U; Android 9; zh-CN; MI MAX 3 Build/PKQ1.190223.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/11.8.8.968 UWS/2.13.2.91 Mobile Safari/537.36 UCBS/2.13.2.91_190617211143 NebulaSDK/1.8.100112 Nebula AlipayDefined(nt:4G,ws:393|0|2.75) AliApp(AP/10.1.68.7434) AlipayClient/10.1.68.7434 Language/zh-Hans useStatusBar/true isConcaveScreen/false Region/CN'
+                    ]
                 ])
-                ->getBody();
+                ->getBody()->getContents();
+            $html = iconv('GBK', 'UTF-8', $html);
+            preg_match_all('/trade-detail-info">.*?class="trade-info-value">(.*?)<\/div/ius', $html, $all);
+            return isset($all[1][0]) ? trim($all[1][0]) : '';
         } catch (GuzzleException $e) {
             throw new PayException($e->getMessage(), 500);
-        } catch (PayException $e) {
-            throw new PayException($e->getMessage(), 445);
+        } catch (\Exception $e) {
+            throw new PayException('处理出错', 444);
         }
     }
 
@@ -88,32 +79,21 @@ class AliPay extends Pay
      * @return \Psr\Http\Message\StreamInterface
      * @throws PayException
      */
-    public function HtmlTwo()
+    public function aliHtml()
     {
         try {
             return (new \GuzzleHttp\Client())
-                ->request('POST', "https://mbillexprod.alipay.com/enterprise/fundAccountDetail.json", [
+                ->request('GET', "https://mbillexprod.alipay.com/enterprise/walletTradeList.json?lastTradeNo=&lastDate=" .
+                    "&pageSize=20&shopId=&pageNum=1&_input_charset=utf-8&ctoken" .
+                    "&source=&_ksTS=" . (time() * 1000) . "_29", [
                     'timeout' => 10,
                     'headers' => [
                         'Cookie' => $this->cookie,
-                        'Origin' => 'https://mbillexprod.alipay.com',
-                        'Accept-Encoding' => 'gzip, deflate, br',
-                        'Accept-Language' => 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
-                        'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                        'Accept' => 'application/json, text/javascript',
-                        'Referer' => 'https://mbillexprod.alipay.com/enterprise/fundAccountDetail.htm',
-                        'X-Requested-With' => 'XMLHttpRequest',
-                        'Connection' => 'keep-alive',
-                    ],
-
-                    'body' => 'queryEntrance=1&billUserId=' . Cookie::getCookieName('CLUB_ALIPAY_COM', $this->cookie) .
-                        '&showType=1&type=&precisionQueryKey=tradeNo&' .
-                        'startDateInput=' . date('Y-m-d', strtotime('-1 day')) . '+00%3A00%3A00&endDateInput=' . date('Y-m-d') . '+23%3A59%3A59&' .
-                        'pageSize=20&pageNum=1&total=1&sortTarget=tradeTime&order=descend&sortType=0&' .
-                        '_input_charset=gbk&ctoken=' . Cookie::getCookieName('ctoken', $this->cookie)
-                ])
-                ->getBody();
+                        'Sec-Fetch-Mode' => 'no-cors',
+                        'Referer' => 'https://render.alipay.com/p/z/merchant-mgnt/simple-order.html',
+                        'User-Agent' => 'Mozilla/5.0 (Linux; U; Android 9; zh-CN; MI MAX 3 Build/PKQ1.190223.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/11.8.8.968 UWS/2.13.2.91 Mobile Safari/537.36 UCBS/2.13.2.91_190617211143 NebulaSDK/1.8.100112 Nebula AlipayDefined(nt:4G,ws:393|0|2.75) AliApp(AP/10.1.68.7434) AlipayClient/10.1.68.7434 Language/zh-Hans useStatusBar/true isConcaveScreen/false Region/CN'
+                    ]
+                ]);
         } catch (GuzzleException $e) {
             throw new PayException($e->getMessage(), 500);
         } catch (PayException $e) {
@@ -130,14 +110,8 @@ class AliPay extends Pay
     public function getData($url = false, $syncKey = false)
     {
         // TODO: Implement getData() method.
-        $this->url = $url;
         $this->getRefresh();
-        $aliPayHtml = $url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
-        if (preg_match('/"failed"/', $aliPayHtml)) {
-            $aliPayHtml = !$url ? $this->HtmlOne()->getContents() : $this->HtmlTwo()->getContents();
-            if (preg_match('/"failed"/', $aliPayHtml)) throw new PayException('频繁访问', 446);
-            $this->url = !$url;
-        }
+        $aliPayHtml = $this->aliHtml()->getBody()->getContents();
         try {
             $this->html = iconv('GBK', 'UTF-8', $aliPayHtml);
         } catch (\Exception $e) {
@@ -169,23 +143,20 @@ class AliPay extends Pay
      * @param int $Minute
      * @param bool $Remarks
      * @return array|bool
+     * @throws PayException
      */
     public function DataContrast($fee, $time, $Minute = 3, $Remarks = false)
     {
         // TODO: Implement DataContrast() method.
-//        print_r($this->json['result']['detail'][0]);
-        if (isset($this->json['result']['detail']) && is_array($this->json['result']['detail']))
-            foreach ($this->json['result']['detail'] as $item) {
-                if ((
-                        ($this->url && $item['tradeFrom'] == '外部商户' && $item['direction'] == '卖出' &&
-                            strtotime($item['gmtCreate']) > $time - $Minute * 60 && strtotime($item['gmtCreate']) < $time &&
-                            $item['totalAmount'] == $fee) ||
-                        (!$this->url && $item['signProduct'] == '转账收款码' && $item['accountType'] == '交易' &&
-                            strtotime($item['tradeTime']) > $time - $Minute * 60 && strtotime($item['tradeTime']) < $time &&
-                            $item['tradeAmount'] == $fee)
-                    ) && ($Remarks === false || ($Remarks != '' && (preg_match("/{$Remarks}/", $item['goodsTitle'])) ||
-                            ($Remarks == '' && $item['goodsTitle'] == '商品')))) {
-                    return $item['tradeNo'];
+//        print_r($this->json['result']['list'][0]);
+        if (isset($this->json['result']['list']) && is_array($this->json['result']['list']))
+            foreach ($this->json['result']['list'] as $item) {
+                if ((strtotime($item['dateKey']) > $time - $Minute * 60 && strtotime($item['dateKey']) < $time &&
+                    $item['tradeTransAmount'] == $fee)) {
+                    $remark = $this->getOrderRemark($item['tradeNo']);
+                    if ($Remarks === false || ($Remarks != '' && $remark == $Remarks) || ($Remarks == '' && $remark == '商品')) {
+                        return $item['tradeNo'];
+                    }
                 }
             }
 
